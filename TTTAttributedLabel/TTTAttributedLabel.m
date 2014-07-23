@@ -872,6 +872,17 @@ static inline NSAttributedString *NSAttributedStringBySettingColorFromContext(NS
 	}
 }
 
+- (void)setFont:(UIColor *)font {
+	UIFont *oldFont = self.font;
+	[super setFont:font];
+
+	// Redraw to allow any ColorFromContext attributes a chance to update
+	if (font != oldFont) {
+		[self setNeedsFramesetter];
+		[self setNeedsDisplay];
+	}
+}
+
 - (CGRect)textRectForBounds:(CGRect)bounds
      limitedToNumberOfLines:(NSInteger)numberOfLines {
 	if (!self.attributedText) {
