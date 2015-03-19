@@ -314,6 +314,8 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 @property (readwrite, nonatomic, strong) TTTAttributedLabelLink *activeLink;
 @property (readwrite, nonatomic, strong) NSArray *accessibilityElements;
 
+@property(nonatomic, assign) BOOL truncated;
+
 - (void) longPressGestureDidFire:(UILongPressGestureRecognizer *)sender;
 @end
 
