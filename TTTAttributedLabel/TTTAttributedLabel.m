@@ -849,6 +849,8 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
                 CFIndex truncationAttributePosition = lastLineRange.location;
                 TTTLineBreakMode lineBreakMode = self.lineBreakMode;
 
+                self.truncated = YES;
+                
                 // Multiple lines, only use UILineBreakModeTailTruncation
                 if (numberOfLines != 1) {
                     lineBreakMode = TTTLineBreakByTruncatingTail;
@@ -929,6 +931,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
                 CGFloat penOffset = (CGFloat)CTLineGetPenOffsetForFlush(line, flushFactor, rect.size.width);
                 CGContextSetTextPosition(c, penOffset, lineOrigin.y - descent - self.font.descender);
                 CTLineDraw(line, c);
+                self.truncated = NO;
             }
         } else {
             CGContextSetTextPosition(c, lineOrigin.x, lineOrigin.y - descent - self.font.descender);
@@ -1217,6 +1220,17 @@ afterInheritingLabelAttributesAndConfiguringWithBlock:(NSMutableAttributedString
         [self setNeedsFramesetter];
         [self setNeedsDisplay];
     }
+}
+
+- (void)setFont:(UIColor *)font {
+	UIFont *oldFont = self.font;
+	[super setFont:font];
+
+	// Redraw to allow any ColorFromContext attributes a chance to update
+	if (font != oldFont) {
+		[self setNeedsFramesetter];
+		[self setNeedsDisplay];
+	}
 }
 
 - (CGRect)textRectForBounds:(CGRect)bounds
@@ -1552,7 +1566,13 @@ afterInheritingLabelAttributesAndConfiguringWithBlock:(NSMutableAttributedString
         if ([self.delegate respondsToSelector:@selector(attributedLabel:didSelectLinkWithTextCheckingResult:)]) {
             [self.delegate attributedLabel:self didSelectLinkWithTextCheckingResult:result];
         }
-    } else {
+    }
+    else if ([touches count] == 1 && [[touches anyObject] tapCount] == 1) {
+        if ([self.delegate respondsToSelector:@selector(attributedLabelTapped:)]) {
+            [self.delegate attributedLabelTapped:self];
+        }
+    }
+    else {
         [super touchesEnded:touches withEvent:event];
     }
 }

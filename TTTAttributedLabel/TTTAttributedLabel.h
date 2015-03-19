@@ -286,6 +286,10 @@ IB_DESIGNABLE
 + (CGSize)sizeThatFitsAttributedString:(NSAttributedString *)attributedString
                        withConstraints:(CGSize)size
                 limitedToNumberOfLines:(NSUInteger)numberOfLines;
+/**
+ 
+ */
+@property(readonly, nonatomic, assign) BOOL truncated;
 
 ///----------------------------------
 /// @name Setting the Text Attributes
@@ -516,6 +520,11 @@ didSelectLinkWithTransitInformation:(NSDictionary *)components;
  */
 - (void)attributedLabel:(TTTAttributedLabel *)label
 didSelectLinkWithTextCheckingResult:(NSTextCheckingResult *)result;
+
+/**
+ Tells the delegate that a single tap occured, not on any link
+ */
+- (void)attributedLabelTapped:(TTTAttributedLabel *)label;
 
 ///---------------------------------
 /// @name Responding to Long Presses
